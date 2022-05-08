@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  app:
+    build: ./app
+    container_name: "${CONTAINER_NAME}"
+    ports:
+      - "${WEB_HOST_PORT}:${WEB_CONTAINER_PORT}"
+    stdin_open: true
+    tty: true
+    working_dir: '/workspace'
+    volumes:
+      - ../app:/workspace
+    depends_on:
+      - db
+
+  db:
+    build: ./db
+    container_name: "${DB_CONTAINER_NAME}"
+    expose:
+      - "${DB_CONTAINER_PORT}"
+    environment:
+      - TZ=Asia/Tokyo
+      - MYSQL_ROOT_PASSWORD="${MYSQL_ROOT_PASSWORD}"
+      - MYSQL_DATABASE="${MYSQL_DATABASE}"
+      - MYSQL_USER="${MYSQL_USER}"
+      - MYSQL_PASSWORD="${MYSQL_PASSWORD}"
+    volumes:
+      - ../db/database:/var/lib/mysql
+      - ../db/init:/docker-entrypoint-initdb.d
